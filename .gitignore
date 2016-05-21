@@ -1,3 +1,7 @@
+/gpx
+/meta
+config.json
+
 # Logs
 logs
 *.log
