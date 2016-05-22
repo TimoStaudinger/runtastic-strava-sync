@@ -71,21 +71,24 @@ exports.readActivities = function(account) {
     }).then((activities) => {
       activities = activities
         .filter((activity) => activity[2] === Activities.RUNNING || activity[2] === Activities.CYCLING )
-        .filter((activity) => account.stravaActivities.indexOf(activity[0]) == -1)
+        .filter((activity) => account.stravaActivities.indexOf(activity[0]) === -1)
       console.log(`Done. ${activities.length} new activities found.`)
       console.log('Downloading GPX files...')
 
       account.loadedActivities = []
       let getActivityPromises = []
-      activities.forEach((item) => {
+      activities.forEach((activity) => {
         getActivityPromises.push(new Promise((resolve, reject) => {
           try {
-            const id = item[0]
+            const id = activity[0]
             request(GPX_URL_PREFIX + id + GPX_URL_POSTFIX)
               .on('error', console.log)
               .pipe(fs.createWriteStream(`gpx/${id}.gpx`))
               .on('close', () => {
-                account.loadedActivities.push(id)
+                account.loadedActivities.push({
+                  id: id,
+                  type: activity[2]
+                })
                 resolve()
               })
           } catch (e) {

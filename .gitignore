@@ -1,6 +1,7 @@
 /gpx
 /meta
 config.json
+data/strava_config
 
 # Logs
 logs

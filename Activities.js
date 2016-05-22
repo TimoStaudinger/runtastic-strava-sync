@@ -1,4 +1,6 @@
-exports.RuntasticActivities = {
+'use strict'
+
+const RuntasticActivities = {
   RUNNING: 1,
   NORDIC_WALKING: 2,
   CYCLING: 3,
@@ -79,4 +81,40 @@ exports.RuntasticActivities = {
   BUTT_TRAINER_WORKOUT: 78,
   LEG_TRAINER_WORKOUT: 80,
   RESULTS_WORKOUT: 81
+}
+exports.RuntasticActivities = RuntasticActivities
+
+const StravaActivities = {
+  CYCLING: 'ride',
+  RUNNING: 'run',
+  SWIMMING: 'swim',
+  WORKOUT: 'workout',
+  HIKING: 'hike',
+  WALKING: 'walk',
+  NORDIC_SKIING: 'nordicski',
+  ALPINE_SKIING: 'alpineski',
+  BACK_COUNTRY_SKIING: 'backcountryski',
+  ICE_SKATING: 'iceskate',
+  INLINE_SKATING: 'inlineskate',
+  KITE_SURFING: 'kitesurf',
+  ROLLER_SKIING: 'rollerski',
+  WINDSURFING: 'windsurf',
+  SNOW_BOARDING: 'snowboard',
+  SNOWSHOEING: 'snowshoe',
+  EBIKE_RIDING: 'ebikeride',
+  VIRTUAL_RIDING: 'virtualride'
+}
+exports.StravaActivities = StravaActivities
+
+exports.mapRuntasticToStrava = function(runtasticActivity) {
+  let stravaActivity = undefined
+  switch (runtasticActivity) {
+    case RuntasticActivities.RUNNING:
+      stravaActivity = StravaActivities.RUNNING
+      break
+    case RuntasticActivities.CYCLING:
+      stravaActivity = StravaActivities.CYCLING
+      break
+  }
+  return stravaActivity
 }
