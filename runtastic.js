@@ -4,15 +4,16 @@ const request = require('request').defaults({jar: true})
 const cheerio = require('cheerio')
 const fs = require('fs')
 
+const Activities = require('./Activities').RuntasticActivities
+
 const OVERVIEW_URL = 'https://www.runtastic.com/en/users/Timo-Staudinger/sport-sessions#single_year_2016'
 const SIGN_IN_URL = 'https://www.runtastic.com/en/d/users/sign_in'
 const GPX_URL_PREFIX = 'https://www.runtastic.com/en/users/Timo-Staudinger/sport-sessions/'
 const GPX_URL_POSTFIX = '.gpx'
 
-exports.loadRuntasticData = function(account) {
+exports.readActivities = function(account) {
   return new Promise((resolveAll, rejectAll) => {
-    console.log(`Signing in as ${account.user}`)
-    console.log(`User Id ${account.id}`)
+    console.log('Looking up Runtastic activities...')
     new Promise((resolve, reject) => {
       request(OVERVIEW_URL, (error, response, data) => {
         let $ = cheerio.load(data)
@@ -41,7 +42,6 @@ exports.loadRuntasticData = function(account) {
           jar: true
         }, (error, response, data) => {
           if(response.statusCode === 200) {
-            console.log('Success')
             resolve()
           }
           else {
@@ -53,7 +53,6 @@ exports.loadRuntasticData = function(account) {
     }).then(() => {
       return new Promise((resolve, reject) => {
         try {
-          console.log('Loading activity data')
           request(OVERVIEW_URL, (error, response, data) => {
             try {
               const regex = /var index_data = (.*?\]\])/
@@ -70,8 +69,11 @@ exports.loadRuntasticData = function(account) {
         }
       })
     }).then((activities) => {
-      activities = activities.filter((activity) => account.meta.activities.indexOf(activity[0]) == -1)
-      console.log(`${activities.length} new activities found`)
+      activities = activities
+        .filter((activity) => activity[2] === Activities.RUNNING || activity[2] === Activities.CYCLING )
+        .filter((activity) => account.stravaActivities.indexOf(activity[0]) == -1)
+      console.log(`Done. ${activities.length} new activities found.`)
+      console.log('Downloading GPX files...')
 
       account.loadedActivities = []
       let getActivityPromises = []
@@ -92,7 +94,7 @@ exports.loadRuntasticData = function(account) {
         }))
       })
       Promise.all(getActivityPromises).then(() => {
-        console.log('All activities loaded')
+        console.log(`Done. ${getActivityPromises.length} GPX files downloaded.`)
         resolveAll(account)
       })
     })

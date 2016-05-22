@@ -1,6 +1,8 @@
 'use strict'
 
-const loadRuntasticData = require('./runtastic').loadRuntasticData
+const readRuntasticActivities = require('./runtastic').readActivities
+const readStravaActivities = require('./strava').readActivities
+const writeStravaActivities = () => {}
 const readMeta = require('./meta').readMeta
 const writeMeta = require('./meta').writeMeta
 const addActivities = require('./meta').addActivities
@@ -14,14 +16,15 @@ config.accounts
     return {
       user: account.user,
       password: account.password,
+      stravaAccessToken: account.stravaAccessToken,
       id: id,
       meta: meta
     }
   })
   .map((account) => {
-    loadRuntasticData(account)
-      .then((account) => {
-        const meta = addActivities(account.meta, account.loadedActivities)
-        writeMeta(account.id, meta)
-      })
+    console.log(`For user ${account.user}, id ${account.id}`)
+    readStravaActivities(account)
+      .then(readRuntasticActivities)
+      .then(writeStravaActivities)
+      .then(writeMeta)
     })
