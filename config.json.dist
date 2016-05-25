@@ -2,7 +2,8 @@
   "accounts": [
     {
       "user": "john.doe@gmail.com",
-      "password": "password"
+      "password": "password",
+      "stravaAccessToken": "StravaAccessToken"
     }
   ]
 }

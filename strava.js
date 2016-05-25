@@ -42,7 +42,8 @@ exports.writeActivities = function(account) {
           'activity_type': mapRuntasticActivityToStrava(activity.type),
           'external_id': activity.id,
           'statusCallback': (err, payload) => {
-            if(payload.error) {
+            if(err || payload.error) {
+              console.log(err)
               console.log(payload.error)
               reject()
             }
@@ -51,6 +52,7 @@ exports.writeActivities = function(account) {
         }, () => {})
       } catch(e) {
         console.log(e)
+        reject()
       }
     }))
   })

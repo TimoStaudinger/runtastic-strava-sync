@@ -8,8 +8,9 @@ const Activities = require('./Activities').RuntasticActivities
 
 const OVERVIEW_URL = 'https://www.runtastic.com/en/users/Timo-Staudinger/sport-sessions#single_year_2016'
 const SIGN_IN_URL = 'https://www.runtastic.com/en/d/users/sign_in'
-const GPX_URL_PREFIX = 'https://www.runtastic.com/en/users/Timo-Staudinger/sport-sessions/'
-const GPX_URL_POSTFIX = '.gpx'
+const FILE_URL_PREFIX = 'https://www.runtastic.com/en/users/Timo-Staudinger/sport-sessions/'
+const GPX_EXTENSION = '.gpx'
+
 
 exports.readActivities = function(account) {
   return new Promise((resolveAll, rejectAll) => {
@@ -81,7 +82,7 @@ exports.readActivities = function(account) {
         getActivityPromises.push(new Promise((resolve, reject) => {
           try {
             const id = activity[0]
-            request(GPX_URL_PREFIX + id + GPX_URL_POSTFIX)
+            request(FILE_URL_PREFIX + id + GPX_EXTENSION)
               .on('error', console.log)
               .pipe(fs.createWriteStream(`gpx/${id}.gpx`))
               .on('close', () => {
